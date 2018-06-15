@@ -25,6 +25,7 @@ export default {
   defaultZoom: 12,
   hasLoaded: false,
   layers: [],
+  popup: undefined,
 
   reset() {
     this.map = undefined;
@@ -74,10 +75,7 @@ export default {
           let nl = t.createNameMarker(v);
           lGroup.addLayer(vl);
           lGroup.addLayer(nl);
-
-          vl.on('click',(e)=>{
-            alert(1);
-          });
+          t.regiseEvent(vl, fcbClick, fcbMouse);
           break;
         case 'ML':
           let mi = t.createIconMarker(v);
@@ -157,6 +155,29 @@ export default {
       iconAnchor: [el.width / 2, 0],
       html: el.context
     });
-    return L.marker([geo.lat,geo.lng],{icon:elIcon});
+    return L.marker([geo.lat, geo.lng], { icon: elIcon });
   },
+
+  //事件注册
+  regiseEvent(mk, efc, efm) {
+    const t = this;
+    (efc && efc.hasEvent) && (mk.on('click', (e) => {
+      efc.fcbClick(e, (e, res, sle) => {
+        t.setMapPopup(e, res, sle);
+      });
+    }));
+    (efm && efm.hasEvent) && (mk.on('mouseover', (e) => {}).on('mouseout', (e) => {
+
+    }));
+  },
+
+  //设置弹出框显示
+  setMapPopup(e, content, sle, fcbClose) {
+    const t = this;
+    t.popup = L.popup({
+      offset:L.point(0,0)
+    }).setLatLng(e.latlng)
+      .setContent(content)
+      .openOn(t.map);
+  }
 }

@@ -48,7 +48,7 @@
         MapHandle.loadedOverlay(dt,{hasEvent: true, fcbClick: t.requestMarker},{hasEvent:false,hasValue:false});
       },
       requestMarker(mk,callback){
-        callback(mk,`<div>123456</div>`);
+        callback(mk,`<div style="height:240px;width:320px">123456</div>`);
       },
     },
     components:{}

@@ -179,5 +179,10 @@ export default {
     }).setLatLng(e.latlng)
       .setContent(content)
       .openOn(t.map);
+  },
+
+  //关闭弹出框
+  closeMapPopup(){
+    this.map.closePopup();
   }
 }

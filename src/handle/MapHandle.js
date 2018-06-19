@@ -25,7 +25,7 @@ export default {
   defaultZoom: 12,
   hasLoaded: false,
   layers: [],
-  popup: undefined,
+  popup: null,
 
   reset() {
     this.map = undefined;
@@ -63,7 +63,10 @@ export default {
     const t = this;
     let fs = source.features;
     let fsId = source.id;
+    t.removeLayer(fsId);
+
     let lGroup = L.layerGroup();
+    let stm = new Date();
     fs.forEach(v => {
       let atr = v.attr;
       if (atr.hd) {
@@ -82,6 +85,7 @@ export default {
           let ni = t.createNameMarker(v, true);
           lGroup.addLayer(mi);
           lGroup.addLayer(ni);
+          t.regiseEvent(mi, fcbClick, fcbMouse);
           break;
         case 'MI':
           let io = t.createIconMarker(v);
@@ -106,6 +110,8 @@ export default {
       id: source.id,
       layer: lGroup
     });
+    let etm = new Date();
+    console.log(etm - stm);
   },
 
   //创建IconMarker
@@ -127,7 +133,7 @@ export default {
     let valueIcon = L.divIcon({
       className: 'marker-item',
       iconSize: L.point(32, 24),
-      html: `<div style="border-radius:3px;color:#fff;background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
+      html: `<div style="border-radius:3px;color:${a.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
     });
     return L.marker([geo.lat, geo.lng], { icon: valueIcon });
   },
@@ -136,10 +142,11 @@ export default {
   createNameMarker(a, hasArrow) {
     let geo = a.geo;
     let atr = a.attr;
+    let lth = atr.nm.length;
     let nameIcon = L.divIcon({
       className: 'marker-item-name',
-      iconSize: L.point(atr.nm.length * 16, 18),
-      iconAnchor: [atr.nm.length * 8, -18],
+      iconSize: L.point(lth > 2 ? lth * 16 : 48, 18),
+      iconAnchor: [lth > 2 ? lth * 8 : 24, -18],
       html: `<div><span style="padding:0 5px;">${atr.nm || '--'}</span>${hasArrow ? `<div style="width: 0;  height: 0; border-left: 8px solid transparent; border-bottom: 8px solid #fff; border-right: 8px solid transparent; color:#333; position: absolute;margin-top:-26px;margin-left:${atr.nm.length * 8 - 9}px"></div>`:''}</div>`
     });
     return L.marker([geo.lat, geo.lng], { icon: nameIcon });
@@ -158,12 +165,32 @@ export default {
     return L.marker([geo.lat, geo.lng], { icon: elIcon });
   },
 
+  //删除图层
+  removeLayer(id) {
+    const t = this;
+    if (id) {
+      let l = t.getLayerGroupById(id);
+      l && l.layer.clearLayers();
+      t.layers.splice(t.layers.findIndex(v => v.id === id), 1);
+    } else {
+      t.layers.forEach(l => {
+        t.map.removeLayer(l.layer);
+      });
+      t.layers = [];
+    }
+  },
+
+  //根据图层标识获取图层对象
+  getLayerGroupById(id) {
+    return this.layers.find(v => v.id === id);
+  },
+
   //事件注册
   regiseEvent(mk, efc, efm) {
     const t = this;
     (efc && efc.hasEvent) && (mk.on('click', (e) => {
       efc.fcbClick(e, (e, res, sle) => {
-        t.setMapPopup(e, res, sle);
+        t.setMapPopup(mk, res, sle);
       });
     }));
     (efm && efm.hasEvent) && (mk.on('mouseover', (e) => {}).on('mouseout', (e) => {
@@ -172,17 +199,14 @@ export default {
   },
 
   //设置弹出框显示
-  setMapPopup(e, content, sle, fcbClose) {
-    const t = this;
-    t.popup = L.popup({
-      offset:L.point(0,0)
-    }).setLatLng(e.latlng)
-      .setContent(content)
-      .openOn(t.map);
+  setMapPopup(mk, content, sle, fcbClose) {
+    let p = mk.getPopup();
+    !p ? mk.bindPopup(content).openPopup() : mk.setPopupContent(content);
+    p && (p.on('popupclose', function(e) {
+      alert(1);
+    }));
   },
 
   //关闭弹出框
-  closeMapPopup(){
-    this.map.closePopup();
-  }
+  closeMapPopup() {}
 }

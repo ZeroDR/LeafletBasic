@@ -24,7 +24,7 @@ export default {
   center: [39.95, 116.37],
   defaultZoom: 12,
   hasLoaded: false,
-  layers: [],
+  features: [],
   popup: null,
 
   reset() {
@@ -63,7 +63,7 @@ export default {
     const t = this;
     let fs = source.features;
     let fsId = source.id;
-    t.removeLayer(fsId);
+    t.removeFeature(fsId);
 
     let lGroup = L.layerGroup();
     let stm = new Date();
@@ -106,7 +106,7 @@ export default {
       }
       t.map.addLayer(lGroup);
     });
-    t.layers.push({
+    t.features.push({
       id: source.id,
       layer: lGroup
     });
@@ -123,7 +123,7 @@ export default {
       iconSize: [16, 16],
       iconAnchor: [8, 0]
     });
-    return L.marker([geo.lat, geo.lng], { icon: iconMarker });
+    return L.marker([geo.lat, geo.lng], { icon: iconMarker, iconType: 'IMARKER', attributes: atr });
   },
 
   //创建ValueMarker
@@ -131,11 +131,36 @@ export default {
     let geo = a.geo;
     let atr = a.attr;
     let valueIcon = L.divIcon({
+      iconType: 'VMARKER',
       className: 'marker-item',
       iconSize: L.point(32, 24),
       html: `<div style="border-radius:3px;color:${a.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
     });
-    return L.marker([geo.lat, geo.lng], { icon: valueIcon });
+    return L.marker([geo.lat, geo.lng], { icon: valueIcon, iconType: 'VMARKER', attributes: atr });
+  },
+
+  //更新
+  resetMarkerIcon(a, m) {
+    let atr = a.attr;
+    let ops = m.options;
+    let icon = null;
+    switch (ops.iconType) {
+      case 'VMARKER':
+        icon = L.divIcon({
+          className: 'marker-item',
+          iconSize: L.point(32, 24),
+          html: `<div style="border-radius:3px;color:${a.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
+        });
+        break;
+      case 'IMARKER':
+        icon = L.icon({
+          iconUrl: atr.miu,
+          iconSize: [16, 16],
+          iconAnchor: [8, 0]
+        });
+        break;
+    }
+    icon && m.setIcon(icon);
   },
 
   //创建NameMarker
@@ -149,7 +174,7 @@ export default {
       iconAnchor: [lth > 2 ? lth * 8 : 24, -18],
       html: `<div><span style="padding:0 5px;">${atr.nm || '--'}</span>${hasArrow ? `<div style="width: 0;  height: 0; border-left: 8px solid transparent; border-bottom: 8px solid #fff; border-right: 8px solid transparent; color:#333; position: absolute;margin-top:-26px;margin-left:${atr.nm.length * 8 - 9}px"></div>`:''}</div>`
     });
-    return L.marker([geo.lat, geo.lng], { icon: nameIcon });
+    return L.marker([geo.lat, geo.lng], { icon: nameIcon, iconType: 'NMARKER', attributes: atr });
   },
 
   //创建自定义元素
@@ -162,27 +187,36 @@ export default {
       iconAnchor: [el.width / 2, 0],
       html: el.context
     });
-    return L.marker([geo.lat, geo.lng], { icon: elIcon });
+    return L.marker([geo.lat, geo.lng], { icon: elIcon, iconType: 'EMARKER', attributes: atr });
   },
 
   //删除图层
-  removeLayer(id) {
+  removeFeature(id) {
     const t = this;
     if (id) {
-      let l = t.getLayerGroupById(id);
-      l && l.layer.clearLayers();
-      t.layers.splice(t.layers.findIndex(v => v.id === id), 1);
+      let fs = t.getFeatureById(id);
+      fs && fs.layer.clearLayers();
+      t.features.splice(t.features.findIndex(v => v.id === id), 1);
     } else {
-      t.layers.forEach(l => {
+      t.features.forEach(l => {
         t.map.removeLayer(l.layer);
       });
-      t.layers = [];
+      t.features = [];
     }
   },
 
+  updateMarker(id, type) {
+    const t = this;
+    let fs = t.getFeatureById(id);
+    let updateLayer = fs.layer.getLayers().filter(l => (l.options.icon.options.iconType === type));
+    updateLayer.forEach(l => {
+      t.resetMarkerIcon({ attr: { le: 2, col: '#00ff00', vl: parseInt(Math.random() * 100) } }, l);
+    });
+  },
+
   //根据图层标识获取图层对象
-  getLayerGroupById(id) {
-    return this.layers.find(v => v.id === id);
+  getFeatureById(id) {
+    return this.features.find(v => v.id === id);
   },
 
   //事件注册

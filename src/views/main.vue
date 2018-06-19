@@ -84,6 +84,9 @@ export default {
 
       });
       //MapHandle.loadedOverlay(dt,{hasEvent: true, fcbClick: t.requestMarker},{hasEvent:false,hasValue:false});
+      // setTimeout(function(){
+      //   MapHandle.updateMarker('LAYER_GS','VMARKER');
+      // },5000);
     },
 
     requestMarker(mk, callback) {

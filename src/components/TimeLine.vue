@@ -41,7 +41,7 @@ export default {
       timeSolt: undefined,
       progressTitle: '开始',
       progressBackgroundImage: '/static/imgs/timeline/play.png',
-      leftScrollBar:0,
+      leftScrollBar:36,
       //ScrollBar
       value: 0,
       maxValue: 40,

@@ -53,7 +53,7 @@ export default {
       hasTimeVode: false
     }
   },
-  props:['startTime','endTime'],
+  props:['startTime','endTime','funBack'],
   created() {},
   mounted() {
     //this.ready("2017/07/29 0:00:00", "2017/08/10 0:00:00");
@@ -144,6 +144,9 @@ export default {
       let week = weekArray[new Date(startDate).getDay()];
       let indexStart1 = week + "  " + currentDate + " - " + Hours + ":" + Minutes;
       this.scrollThumb = indexStart1;
+      if(this.funBack){
+        this.funBack(Hours);
+      }
     },
 
     setTimeSmall(value) {

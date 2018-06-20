@@ -1,7 +1,7 @@
 <template>
   <div class="map-panel">
     <div id="map"></div>
-    <time-line start-time="2017/07/29 0:00:00" end-time="2017/08/10 0:00:00"></time-line>
+    <time-line start-time="2017/07/29 0:00:00" end-time="2017/08/10 0:00:00" :fun-back="timeCallback"></time-line>
   </div>
 </template>
 <script>
@@ -89,6 +89,9 @@ export default {
       // setTimeout(function(){
       //   MapHandle.updateMarker('LAYER_GS','VMARKER');
       // },5000);
+    },
+
+    timeCallback(tm){
     },
 
     requestMarker(mk, callback) {

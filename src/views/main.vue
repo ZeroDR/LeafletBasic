@@ -1,10 +1,12 @@
 <template>
   <div class="map-panel">
     <div id="map"></div>
+    <time-line start-time="2017/07/29 0:00:00" end-time="2017/08/10 0:00:00"></time-line>
   </div>
 </template>
 <script>
 import MapHandle from '@/handle/Maphandle'
+import TimeLine from '@/components/TimeLine'
 import EnvironmentalUtil from '@/stand/EnvironmentalUtil'
 import RequestHandle from '@/request'
 
@@ -128,7 +130,7 @@ export default {
       return rtValue;
     },
   },
-  components: {}
+  components: { TimeLine }
 };
 
 </script>

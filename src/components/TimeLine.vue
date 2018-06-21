@@ -1,26 +1,20 @@
 <template>
   <div class="box">
-    <div id="progressTime_control" @click="progressTimeClick" v-bind:style="{backgroundImage:`url(${progressBackgroundImage})`}" :title="progressTitle"></div>
-    <div class="progressTime" id="progressTime" style="z-index:9">
+    <div class="progressTime_control" @click="progressTimeClick" v-bind:style="{backgroundImage:`url(${progressBackgroundImage})`}" :title="progressTitle"></div>
+    <div class="progressTime" style="z-index:9">
       <div>
-        <p id="startTime" style=" float:left;margin-left:33px;opacity: 0;display: none;">{{startTime}}</p>
-        <p id="endTime" style=" float:right;margin-right:33px;opacity: 0;display: none;">{{endTime}}</p>
+        <p style=" float:left;margin-left:33px;opacity: 0;display: none;">{{startTime}}</p>
+        <p style=" float:right;margin-right:33px;opacity: 0;display: none;">{{endTime}}</p>
       </div>
       <div class="time_slot" v-html="timeSolt" v-bind:class=""></div>
-      <div id="progressTime_concent">
-        <div id="scrollBarBox" @click="scrollBarClick" @mousemove="scrollBarMouseMove" @mouseover="scrollBarMouseOver" @mouseout="scrollBarMouseOut">
+      <div class="progressTime_concent">
+        <div class="scrollBarBox" @click="scrollBarClick" @mousemove="scrollBarMouseMove" @mouseover="scrollBarMouseOver" @mouseout="scrollBarMouseOut">
           <div id="scrollBar">
-            <div id="scroll_Track" v-bind:style="{width:(leftThumb > 0 ? leftThumb + 2 : 0)+'px'}"></div>
-            <div id="scroll_Thumb" v-bind:style="{marginLeft:(leftThumb > 0 ? leftThumb + 1 : 0)+'px'}">{{scrollThumb}}</div>
+            <div class="scroll_Track" v-bind:style="{width:(leftThumb > 0 ? leftThumb + 2 : 0)+'px'}"></div>
+            <div class="scroll_Thumb" v-bind:style="{marginLeft:(leftThumb > 0 ? leftThumb + 1 : 0)+'px'}">{{scrollThumb}}</div>
           </div>
         </div>
         <div class="timecode" v-html="htmlTimeCode" v-bind:style="{marginLeft:leftTimeCode+'px'}" v-show="hasTimeVode">{{timeCode}}</div>
-        <div style="width:90%; margin-left: auto;margin-right: auto;">
-          <div style="width:300px;float:right;margin-right:-110px;margin-top:-8px">
-            <p id="TimeSpeed" style="float:left;margin-right:40px;display:none">×1</p>
-            <p style="float:right" id="scrollBarTxt"></p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -267,7 +261,7 @@ export default {
   z-index:401;
 }
 
-#progressTime_control {
+.progressTime_control {
   float: left;
   width: 36px;
   height: 36px;
@@ -283,7 +277,7 @@ export default {
   background-position: center;
 }
 
-#progressTime_control:before {
+.progressTime_control:before {
   content: '';
   width: 36px;
   height: 6px;
@@ -302,7 +296,7 @@ export default {
 
 /*#progressTime_control:after { content: ''; width: 0; height: 0; border: 8px solid transparent; border-left: 12px solid #fff; position: absolute; left: 50%; margin-left: -6px; top: 50%; margin-top: -8px; }*/
 
-#progressTime_control:hover:after {
+.progressTime_control:hover:after {
   border-left-color: #ccc;
 }
 
@@ -319,14 +313,14 @@ export default {
   float: left;
 }
 
-#progressTime_concent {
+.progressTime_concent {
   width: 100%;
   height: 36px;
   margin: 0 auto;
   cursor: pointer;
 }
 
-#scrollBarBox {
+.scrollBarBox {
   width: 100%;
   height: 6px;
   padding: 5px 0;
@@ -369,14 +363,14 @@ export default {
   margin-left: -5px;
 }
 
-#scroll_Track {
+.scroll_Track {
   width: 0px;
   height: 6px;
   background-color: #9D0300;
   transition: all ease-in-out .25s;
 }
 
-#scroll_Thumb {
+.scroll_Thumb {
   height: 24px;
   width: 100px;
   text-align: center;
@@ -391,7 +385,7 @@ export default {
   transition: all ease-in-out .25s;
 }
 
-#scroll_Thumb:after {
+.scroll_Thumb:after {
   content: '';
   width: 0;
   height: 0;

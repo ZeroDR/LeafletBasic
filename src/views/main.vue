@@ -1,7 +1,7 @@
 <template>
   <div class="map-panel">
     <div id="map"></div>
-    <time-line start-time="2017/07/29 0:00:00" end-time="2017/08/10 0:00:00" :fun-back="timeCallback"></time-line>
+    <time-line start-time="2018/06/18 0:00:00" end-time="2018/06/25 0:00:00" :fun-back="timeCallback"></time-line>
   </div>
 </template>
 <script>

@@ -1,7 +1,7 @@
 /**
  * Created by admin on 2018/4/27.
  * 涉及属性对象标准
- * 如:{geoType:'',attr:{code:'',lng:'',lat:'',vl:'',nm:'',lt:'',col:'',miu:'',le:''},geo:{lng:'',lat:''}}
+ * 如:{geoType:'',properties:{code:'',lng:'',lat:'',vl:'',nm:'',lt:'',col:'',miu:'',le:''},geo:{lng:'',lat:''}}
  * 说明:
  * geoType:空间数据类别（点、线、面）
  * code:唯一标识
@@ -68,7 +68,7 @@ export default {
     let lGroup = L.layerGroup();
     let stm = new Date();
     fs.forEach(v => {
-      let atr = v.attr;
+      let atr = v.properties;
       if (atr.hd) {
 
       }
@@ -114,42 +114,54 @@ export default {
     console.log(etm - stm);
   },
 
+  //创建JSONLayer
+  createJsonLayerByGeoJSON(data){
+    let l = L.geoJSON(data,{
+      style:function(f){
+        console.log(f);
+      }
+    });
+  },
+
   //创建IconMarker
   createIconMarker(a) {
-    let geo = a.geo;
-    let atr = a.attr;
+    let geo = a.geometry;
+    let atr = a.properties;
+    let cds = geo.coordinates;
     let iconMarker = L.icon({
       iconUrl: atr.miu,
       iconSize: [16, 16],
       iconAnchor: [8, 0]
     });
-    return L.marker([geo.lat, geo.lng], { icon: iconMarker, iconType: 'IMARKER', attributes: atr });
+    return L.marker([cds[1],cds[0]], { icon: iconMarker, iconType: 'IMARKER', attributes: atr });
   },
 
   //创建ValueMarker
   createValueMarker(a) {
-    let geo = a.geo;
-    let atr = a.attr;
+    let geo = a.geometry;
+    let atr = a.properties;
+    let cds = geo.coordinates;
     let valueIcon = L.divIcon({
       iconType: 'VMARKER',
       className: 'marker-item',
       iconSize: L.point(32, 24),
-      html: `<div style="border-radius:3px;color:${a.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
+      html: `<div style="border-radius:3px;color:${atr.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
     });
-    return L.marker([geo.lat, geo.lng], { icon: valueIcon, iconType: 'VMARKER', attributes: atr });
+    return L.marker([cds[1],cds[0]], { icon: valueIcon, iconType: 'VMARKER', attributes: atr });
   },
 
   //更新
   resetMarkerIcon(a, m) {
-    let atr = a.attr;
+    let atr = a.properties;
     let ops = m.options;
+    let cds = geo.coordinates;
     let icon = null;
     switch (ops.iconType) {
       case 'VMARKER':
         icon = L.divIcon({
           className: 'marker-item',
           iconSize: L.point(32, 24),
-          html: `<div style="border-radius:3px;color:${a.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
+          html: `<div style="border-radius:3px;color:${atr.le > 3 ? '#fff' : '#333'};background-color:${atr.col}">${atr.vl || '--'}<div class="arrow" style="width: 0;  height: 0; border-left: 8px solid transparent; border-top: 8px solid; border-right: 8px solid transparent; color:${atr.col}; position: absolute;  margin-top:-2px;margin-left:8px"></div></div>`
         });
         break;
       case 'IMARKER':
@@ -165,8 +177,9 @@ export default {
 
   //创建NameMarker
   createNameMarker(a, hasArrow) {
-    let geo = a.geo;
-    let atr = a.attr;
+    let geo = a.geometry;
+    let atr = a.properties;
+    let cds = geo.coordinates;
     let lth = atr.nm.length;
     let nameIcon = L.divIcon({
       className: 'marker-item-name',
@@ -174,20 +187,21 @@ export default {
       iconAnchor: [lth > 2 ? lth * 8 : 24, -18],
       html: `<div><span style="padding:0 5px;">${atr.nm || '--'}</span>${hasArrow ? `<div style="width: 0;  height: 0; border-left: 8px solid transparent; border-bottom: 8px solid #fff; border-right: 8px solid transparent; color:#333; position: absolute;margin-top:-26px;margin-left:${atr.nm.length * 8 - 9}px"></div>`:''}</div>`
     });
-    return L.marker([geo.lat, geo.lng], { icon: nameIcon, iconType: 'NMARKER', attributes: atr });
+    return L.marker([cds[1],cds[0]], { icon: nameIcon, iconType: 'NMARKER', attributes: atr });
   },
 
   //创建自定义元素
   createElementMarker(a) {
-    let geo = a.geo;
-    let atr = a.attr;
+    let geo = a.geometry;
+    let atr = a.properties;
+    let cds = geo.coordinates;
     let el = atr.el;
     let elIcon = L.divIcon({
       iconSize: [el.width, el.height],
       iconAnchor: [el.width / 2, 0],
       html: el.context
     });
-    return L.marker([geo.lat, geo.lng], { icon: elIcon, iconType: 'EMARKER', attributes: atr });
+    return L.marker([cds[1],cds[0]], { icon: elIcon, iconType: 'EMARKER', attributes: atr });
   },
 
   //删除图层
@@ -210,7 +224,7 @@ export default {
     let fs = t.getFeatureById(id);
     let updateLayer = fs.layer.getLayers().filter(l => (l.options.icon.options.iconType === type));
     updateLayer.forEach(l => {
-      t.resetMarkerIcon({ attr: { le: 2, col: '#00ff00', vl: parseInt(Math.random() * 100) } }, l);
+      t.resetMarkerIcon({ properties: { le: 2, col: '#00ff00', vl: parseInt(Math.random() * 100) } }, l);
     });
   },
 

@@ -80,6 +80,8 @@ export default {
         let dts = t.dataTransform(result.data, 'citygid', 'pointname', 'aqi', 'LL');
         dts && (MapHandle.loadedOverlay({
           id: 'LAYER_GS',
+          type:'FeatureCollection',
+          geometryType:'Point',
           features: dts
         }, { hasEvent: true, fcbClick: t.requestMarker }, { hasEvent: false, hasValue: false }));
       }, ex => {
@@ -112,8 +114,8 @@ export default {
             break;
         }
         rtValue.push({
-          geoType: 'POINT',
-          attr: {
+          type: 'Feature',
+          properties: {
             code: v[kf],
             lt: lt,
             vl: v[vf],
@@ -124,9 +126,9 @@ export default {
             miu: 'static/imgs/environmental/gs-g.png', //16*16
             col: EnvironmentalUtil.getColorByIndex(le) || '#999'
           },
-          geo: {
-            lng: v.longitude,
-            lat: v.latitude
+          geometry: {
+            type:'Point',
+            coordinates:[v.longitude,v.latitude]
           },
         });
       });
